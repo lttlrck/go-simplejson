@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"log"
+	"bytes"
 )
 
 // returns the current implementation version
@@ -46,6 +47,17 @@ func (j *Json) Encode() ([]byte, error) {
 // EncodePretty returns its marshaled data as `[]byte` with indentation
 func (j *Json) EncodePretty() ([]byte, error) {
 	return json.MarshalIndent(&j.data, "", "  ")
+}
+
+func (j *Json) EncodePrettyUnsafe() ([]byte, error) {
+
+    var buf bytes.Buffer
+    enc := json.NewEncoder(&buf)
+    enc.SetEscapeHTML(false)
+    enc.SetIndent("", "    ")
+    err := enc.Encode(j.data)
+
+    return buf.Bytes(), err
 }
 
 // Implements the json.Marshaler interface.
